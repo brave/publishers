@@ -17,13 +17,14 @@ class Promo::PeerToPeerRegistrationTest < ActiveJob::TestCase
     stub_request(:put, /api\/2\/promo\/referral_code\/p2p/).to_return(
       status: 200,
       body: [
-        {"referral_code":"NDF915",
-         "ts":"2018-10-12T20:06:50.125Z",
-         "type":"peer_to_peer",
-         "owner_id": publisher.owner_identifier,
-         "channel_id": "",
-         "status":"active"
-        }
+        {
+          "referral_code": "NDF915",
+          "ts": "2018-10-12T20:06:50.125Z",
+          "type": "peer_to_peer",
+          "owner_id": publisher.owner_identifier,
+          "channel_id": "",
+          "status": "active",
+        },
       ].to_json
     )
     PromoClient.peer_to_peer_registration.create(

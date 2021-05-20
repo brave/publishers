@@ -1,7 +1,6 @@
 require "test_helper"
 
 class PublisherBalanceGetterTest < ActiveJob::TestCase
-
   before(:example) do
     @prev_offline = Rails.application.secrets[:api_eyeshade_offline]
   end
@@ -18,7 +17,7 @@ class PublisherBalanceGetterTest < ActiveJob::TestCase
     stubbed_response_body = [{
       "account_id" => "#{publisher.owner_identifier}",
       "account_type" => "owner",
-      "balance" => "900"
+      "balance" => "900",
     }]
 
     # stub empty response is returned by eyeshade for only one channel
@@ -43,7 +42,7 @@ class PublisherBalanceGetterTest < ActiveJob::TestCase
       {
         "account_id" => "#{channel.details.channel_identifier}",
         "account_type" => "channel",
-        "balance" => "900"
+        "balance" => "900",
       }
     end
 

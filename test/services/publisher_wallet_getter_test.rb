@@ -17,14 +17,14 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
     publisher = publishers(:verified)
     result = PublisherWalletGetter.new(publisher: publisher).perform
 
-    assert result.kind_of?(Eyeshade::Wallet)
+    assert result.is_a?(Eyeshade::Wallet)
   end
 
   describe "when online" do
     before do
       Rails.application.secrets[:api_eyeshade_offline] = false
     end
-    let(:eyeshade_response) {
+    let(:eyeshade_response) do
       {
         "wallet": {
           "provider": "uphold",
@@ -32,24 +32,24 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
           "isMember": true,
           "status": "ok",
           "defaultCurrency": "USD",
-          "possibleCurrencies": [ "USD", "EUR", "BTC", "ETH", "BAT" ],
-          "scope": ["cards:write"]
+          "possibleCurrencies": ["USD", "EUR", "BTC", "ETH", "BAT"],
+          "scope": ["cards:write"],
         },
         "rates": {
           "BTC": 3.138e-05,
-          "XAU": 0.00019228366919698587
+          "XAU": 0.00019228366919698587,
         },
         "contributions": {
           "amount": "5.71",
           "currency": "USD",
           "altcurrency": "BAT",
-          "probi": "24881568585439183646"
+          "probi": "24881568585439183646",
         },
         "status": {
-          "provider": "uphold"
-        }
+          "provider": "uphold",
+        },
       }
-    }
+    end
 
     it "returns a wallet with channel data" do
       publisher = publishers(:completed)
@@ -59,19 +59,19 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
         {
           "account_id" => "completed.org",
           "account_type" => "channel",
-          "balance" => "25.00"
+          "balance" => "25.00",
         },
         {
           "account_id" => "youtube#channeldef456",
           "account_type" => "channel",
-          "balance" => "10014"
-        }
+          "balance" => "10014",
+        },
       ]
 
       stub_all_eyeshade_wallet_responses(publisher: publisher, wallet: eyeshade_response, balances: channel_balances_response)
       result = PublisherWalletGetter.new(publisher: publisher).perform
 
-      assert result.kind_of?(Eyeshade::Wallet)
+      assert result.is_a?(Eyeshade::Wallet)
 
       assert_equal(
         25.0,
@@ -97,7 +97,7 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
       stub_all_eyeshade_wallet_responses(publisher: publisher, wallet: eyeshade_response)
       result = PublisherWalletGetter.new(publisher: publisher).perform
 
-      assert result.kind_of?(Eyeshade::Wallet)
+      assert result.is_a?(Eyeshade::Wallet)
     end
 
     test "overall balance is sum of channel and owner accounts" do
@@ -108,23 +108,23 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
         {
           "account_id" => "publishers#uuid:1a526190-7fd0-5d5e-aa4f-a04cd8550da8",
           "account_type" => "owner",
-          "balance" => "20.00"
+          "balance" => "20.00",
         },
         {
           "account_id" => "uphold_connected.org",
           "account_type" => "channel",
-          "balance" => "20.00"
+          "balance" => "20.00",
         },
         {
           "account_id" => "twitch#channel:ucTw",
           "account_type" => "channel",
-          "balance" => "20.00"
+          "balance" => "20.00",
         },
         {
           "account_id" => "twitter#channel:def456",
           "account_type" => "channel",
-          "balance" => "20.00"
-        }
+          "balance" => "20.00",
+        },
       ]
 
       stub_all_eyeshade_wallet_responses(publisher: publisher, wallet: eyeshade_response, balances: balance_response)
@@ -132,7 +132,7 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
       wallet = PublisherWalletGetter.new(publisher: publisher).perform
 
       assert_equal wallet.overall_balance.amount_bat + wallet.overall_balance.fees_bat, 80
-      assert_equal wallet.overall_balance.amount_probi + wallet.overall_balance.fees_probi,  80 * BigDecimal('1.0e18')
+      assert_equal wallet.overall_balance.amount_probi + wallet.overall_balance.fees_probi, 80 * BigDecimal('1.0e18')
     end
   end
 
@@ -146,16 +146,16 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
         "provider": "uphold",
         "authorized": true,
         "defaultCurrency": "USD",
-        "possibleCurrencies": [ "USD", "EUR", "BTC", "ETH", "BAT" ],
-        "scope": ["cards:write"]
-      }
+        "possibleCurrencies": ["USD", "EUR", "BTC", "ETH", "BAT"],
+        "scope": ["cards:write"],
+      },
     }
 
     stub_all_eyeshade_wallet_responses(publisher: publisher, wallet: wallet)
 
     result = PublisherWalletGetter.new(publisher: publisher).perform
 
-    assert result.kind_of?(Eyeshade::Wallet)
+    assert result.is_a?(Eyeshade::Wallet)
   end
 
   test "when online returns a wallet with channel data" do
@@ -167,29 +167,29 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
         "provider": "uphold",
         "authorized": true,
         "defaultCurrency": "USD",
-        "possibleCurrencies": [ "USD", "EUR", "BTC", "ETH", "BAT" ],
-        "scope": ["cards:write"]
-      }
+        "possibleCurrencies": ["USD", "EUR", "BTC", "ETH", "BAT"],
+        "scope": ["cards:write"],
+      },
     }
 
     balances = [
       {
         "account_id" => "completed.org",
         "balance" => "25.00",
-        "account_type" => "channel"
+        "account_type" => "channel",
       },
       {
         "accont_type" => "channel",
         "account_id" => "youtube#channeldef456",
-        "balance" => "10014"
-      }
+        "balance" => "10014",
+      },
     ]
 
     stub_all_eyeshade_wallet_responses(publisher: publisher, wallet: wallet, balances: balances)
 
     result = PublisherWalletGetter.new(publisher: publisher).perform
 
-    assert result.kind_of?(Eyeshade::Wallet)
+    assert result.is_a?(Eyeshade::Wallet)
     assert_equal "23.75", result.channel_balances["completed.org"].amount_bat.to_s
   end
 
@@ -202,9 +202,9 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
         "provider": "uphold",
         "authorized": true,
         "defaultCurrency": "USD",
-        "possibleCurrencies": [ "USD", "EUR", "BTC", "ETH", "BAT" ],
-        "scope": ["cards:write"]
-      }
+        "possibleCurrencies": ["USD", "EUR", "BTC", "ETH", "BAT"],
+        "scope": ["cards:write"],
+      },
     }
     stub_all_eyeshade_wallet_responses(publisher: publisher, wallet: wallet)
     result = PublisherWalletGetter.new(publisher: publisher).perform
@@ -217,33 +217,33 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
     publisher = publishers(:uphold_connected)
 
     wallet = {
-      "rates"=> {
-        "BTC"=>3.138e-05,
-        "XAU"=>0.00019228366919698587
-      }
+      "rates" => {
+        "BTC" => 3.138e-05,
+        "XAU" => 0.00019228366919698587,
+      },
     }
 
     balances = [
       {
         "account_id" => "publishers#uuid:1a526190-7fd0-5d5e-aa4f-a04cd8550da8",
         "account_type" => "owner",
-        "balance" => "20.00"
+        "balance" => "20.00",
       },
       {
         "account_id" => "uphold_connected.org",
         "account_type" => "channel",
-        "balance" => "20.00"
+        "balance" => "20.00",
       },
       {
         "account_id" => "twitch#channel:ucTw",
         "account_type" => "channel",
-        "balance" => "20.00"
+        "balance" => "20.00",
       },
       {
         "account_id" => "twitter#channel:def456",
         "account_type" => "channel",
-        "balance" => "20.00"
-      }
+        "balance" => "20.00",
+      },
     ]
 
     stub_all_eyeshade_wallet_responses(publisher: publisher, wallet: wallet, balances: balances)
@@ -262,11 +262,11 @@ class PublisherWalletGetterTest < ActiveJob::TestCase
 
     wallet = {
       "rates" => {
-          "BTC" => 0.00005418424016883016,
-          "ETH" => 0.000795331082073117,
-          "USD" => 0.2363863335301452,
-          "EUR" => 0.20187818378874756,
-          "GBP" => 0.1799810085548496
+        "BTC" => 0.00005418424016883016,
+        "ETH" => 0.000795331082073117,
+        "USD" => 0.2363863335301452,
+        "EUR" => 0.20187818378874756,
+        "GBP" => 0.1799810085548496,
       },
     }
     transactions = PublisherTransactionsGetter.new(publisher: publisher).perform_offline

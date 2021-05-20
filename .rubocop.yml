@@ -36,17 +36,20 @@ AllCops:
     - app/services/payout_report_publisher_includer.rb
     - app/services/promo/unattached_registrar.rb
     - app/services/promo/registrations_geo_stats_fetcher.rb
+    - test/services/**/*
   Exclude:
     - bin/**/*
     - db/**/*
     - vendor/**/*
 Metrics/LineLength:
   Max: 400
-Airbnb/SimpleModifierConditional:
-  Enabled: false
 Airbnb/DefaultScope:
   Enabled: false
+Airbnb/SimpleModifierConditional:
+  Enabled: false
 Airbnb/SimpleUnless:
+  Enabled: false
+Airbnb/UnsafeYamlMarshal:
   Enabled: false
 Style/AndOr:
   Enabled: false

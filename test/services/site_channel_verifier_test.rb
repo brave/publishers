@@ -12,7 +12,7 @@ class SiteChannelVerifierTest < ActiveSupport::TestCase
     headers = {
       'Accept' => '*/*',
       'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
-      'User-Agent' => 'Ruby'
+      'User-Agent' => 'Ruby',
     }
     body ||= SiteChannelVerificationFileGenerator.new(site_channel: channel).generate_file_content
     stub_request(:get, url).
@@ -89,14 +89,14 @@ class SiteChannelVerifierTest < ActiveSupport::TestCase
   end
 
   test "DNS method verifies domain TXT entry" do
-    dns_response = YAML::load_file(Rails.root.join("test/stubs/dnsruby/site_verification_txt.yml"))
+    dns_response = YAML.load_file(Rails.root.join("test/stubs/dnsruby/site_verification_txt.yml"))
     Dnsruby::Resolver.any_instance.stubs(:query).returns(dns_response)
     c = channels(:to_verify_dns)
     assert_verification(c)
   end
 
   test "DNS method fails domain with abridged TXT entry" do
-    dns_response = YAML::load_file(Rails.root.join("test/stubs/dnsruby/site_verification_txt_abridged.yml"))
+    dns_response = YAML.load_file(Rails.root.join("test/stubs/dnsruby/site_verification_txt_abridged.yml"))
     Dnsruby::Resolver.any_instance.stubs(:query).returns(dns_response)
     c = channels(:to_verify_dns)
     refute_verification(c)
@@ -104,7 +104,7 @@ class SiteChannelVerifierTest < ActiveSupport::TestCase
   end
 
   test "DNS method fails for domain with different TXT entry" do
-    dns_response = YAML::load_file(Rails.root.join("test/stubs/dnsruby/site_verification_txt_other.yml"))
+    dns_response = YAML.load_file(Rails.root.join("test/stubs/dnsruby/site_verification_txt_other.yml"))
     Dnsruby::Resolver.any_instance.stubs(:query).returns(dns_response)
     c = channels(:to_verify_dns)
     refute_verification(c)
@@ -112,7 +112,7 @@ class SiteChannelVerifierTest < ActiveSupport::TestCase
   end
 
   test "DNS method fails for domain without any TXT entries" do
-    dns_response = YAML::load_file(Rails.root.join("test/stubs/dnsruby/without_txt.yml"))
+    dns_response = YAML.load_file(Rails.root.join("test/stubs/dnsruby/without_txt.yml"))
     Dnsruby::Resolver.any_instance.stubs(:query).returns(dns_response)
     c = channels(:to_verify_dns)
     refute_verification(c)
@@ -120,7 +120,7 @@ class SiteChannelVerifierTest < ActiveSupport::TestCase
   end
 
   test "DNS method fails for domain with unrelated TXT entries" do
-    dns_response = YAML::load_file(Rails.root.join("test/stubs/dnsruby/unrelated_txt.yml"))
+    dns_response = YAML.load_file(Rails.root.join("test/stubs/dnsruby/unrelated_txt.yml"))
     Dnsruby::Resolver.any_instance.stubs(:query).returns(dns_response)
     c = channels(:to_verify_dns)
     refute_verification(c)

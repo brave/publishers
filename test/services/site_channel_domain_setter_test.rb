@@ -2,7 +2,6 @@ require "test_helper"
 require "webmock/minitest"
 
 class SiteChannelDomainSetterTest < ActiveJob::TestCase
-
   def setup
     @prev_host_inspector_offline = Rails.application.secrets[:host_inspector_offline]
     @prev_api_eyeshade_offline = Rails.application.secrets[:api_eyeshade_offline]
@@ -17,8 +16,29 @@ class SiteChannelDomainSetterTest < ActiveJob::TestCase
   end
 
   test "normalizes and inspects the domain" do
+    mock_response = {
+      "protocol": "http:",
+      "slashes": true,
+      "auth": null,
+      "host": "example.com",
+      "port": null,
+      "hostname": "foo-bar.com",
+      "hash": null,
+      "search": "",
+      "query": {
+      },
+      "pathname": "/",
+      "path": "/",
+      "href": "http://foo-bar.com/",
+      "TLD": "com",
+      "URL": "http://foo-bar.com",
+      "SLD": "foo-bar.com",
+      "RLD": "",
+      "QLD": "",
+      "publisher": "example.com",
+    }
     stub_request(:get, /v1\/publishers\/identity\?url=https:\/\/example\.com/).
-      to_return(status: 200, body: "{\"protocol\":\"http:\",\"slashes\":true,\"auth\":null,\"host\":\"example.com\",\"port\":null,\"hostname\":\"foo-bar.com\",\"hash\":null,\"search\":\"\",\"query\":{},\"pathname\":\"/\",\"path\":\"/\",\"href\":\"http://foo-bar.com/\",\"TLD\":\"com\",\"URL\":\"http://foo-bar.com\",\"SLD\":\"foo-bar.com\",\"RLD\":\"\",\"QLD\":\"\",\"publisher\":\"example.com\"}", headers: {})
+      to_return(status: 200, body: mock_response.to_json, headers: {})
 
     stub_request(:get, "https://example.com").
       to_return(status: 200, body: "<html><body><h1>Welcome to mysite</h1></body></html>", headers: {})
@@ -87,9 +107,30 @@ class SiteChannelDomainSetterTest < ActiveJob::TestCase
   end
 
   test "normalization can succeed and inspection can fail if connection to site fails when https and http fail" do
+    mocked_response = {
+      "protocol": "http:",
+      "slashes": true,
+      "auth": null,
+      "host": "mywordpressisdown.com",
+      "port": null,
+      "hostname": "foo-bar.com",
+      "hash": null,
+      "search": "",
+      "query": {
+      },
+      "pathname": "/",
+      "path": "/",
+      "href": "http://foo-bar.com/",
+      "TLD": "com",
+      "URL": "http://foo-bar.com",
+      "SLD": "foo-bar.com",
+      "RLD": "",
+      "QLD": "",
+      "publisher": "mywordpressisdown.com",
+    }
     stub_request(:get, /v1\/publishers\/identity\?url=https:\/\/mywordpressisdown\.com/).
-      with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Faraday v0.9.2'}).
-      to_return(status: 200, body: "{\"protocol\":\"http:\",\"slashes\":true,\"auth\":null,\"host\":\"mywordpressisdown.com\",\"port\":null,\"hostname\":\"foo-bar.com\",\"hash\":null,\"search\":\"\",\"query\":{},\"pathname\":\"/\",\"path\":\"/\",\"href\":\"http://foo-bar.com/\",\"TLD\":\"com\",\"URL\":\"http://foo-bar.com\",\"SLD\":\"foo-bar.com\",\"RLD\":\"\",\"QLD\":\"\",\"publisher\":\"mywordpressisdown.com\"}", headers: {})
+      with(headers: { 'Accept' => '*/*', 'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent' => 'Faraday v0.9.2' }).
+      to_return(status: 200, body: mocked_response.to_json, headers: {})
 
     stub_request(:get, "https://mywordpressisdown.com").
       to_raise(Errno::ECONNREFUSED.new)
@@ -124,9 +165,30 @@ class SiteChannelDomainSetterTest < ActiveJob::TestCase
   end
 
   test "does not raise an exception when domain is already taken by a verified publisher" do
+    mocked_response = {
+      "protocol": "http:",
+      "slashes": true,
+      "auth": null,
+      "host": "verified.org",
+      "port": null,
+      "hostname": "foo-bar.com",
+      "hash": null,
+      "search": "",
+      "query": {
+      },
+      "pathname": "/",
+      "path": "/",
+      "href": "http://foo-bar.com/",
+      "TLD": "com",
+      "URL": "http://foo-bar.com",
+      "SLD": "foo-bar.com",
+      "RLD": "",
+      "QLD": "",
+      "publisher": "verified.org",
+    }
     stub_request(:get, /v1\/publishers\/identity\?url=https:\/\/verified\.org/).
-      with(headers: {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Faraday v0.9.2'}).
-      to_return(status: 200, body: "{\"protocol\":\"http:\",\"slashes\":true,\"auth\":null,\"host\":\"verified.org\",\"port\":null,\"hostname\":\"foo-bar.com\",\"hash\":null,\"search\":\"\",\"query\":{},\"pathname\":\"/\",\"path\":\"/\",\"href\":\"http://foo-bar.com/\",\"TLD\":\"com\",\"URL\":\"http://foo-bar.com\",\"SLD\":\"foo-bar.com\",\"RLD\":\"\",\"QLD\":\"\",\"publisher\":\"verified.org\"}", headers: {})
+      with(headers: { 'Accept' => '*/*', 'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent' => 'Faraday v0.9.2' }).
+      to_return(status: 200, body: mocked_response.to_json, headers: {})
 
     channel_details = SiteChannelDetails.new
 

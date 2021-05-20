@@ -17,7 +17,7 @@ class Promo::RegistrationGetterTest < ActiveJob::TestCase
     channel = publisher.channels.first
 
     # Promo::RegistrationGetter.any_instance.stubs(:active_promo_id).returns("free-bats-2018q1")
-    channel_referral_code = Promo::RegistrationGetter.new(publisher: publisher, channel: channel).perform    
+    channel_referral_code = Promo::RegistrationGetter.new(publisher: publisher, channel: channel).perform
 
     assert_not_nil channel_referral_code
   end

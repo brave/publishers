@@ -1,7 +1,6 @@
 require "test_helper"
 
 class PublisherStatementGetterTest < ActiveJob::TestCase
-
   before(:example) do
     @prev_offline = Rails.application.secrets[:api_eyeshade_offline]
   end

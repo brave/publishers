@@ -63,7 +63,8 @@ class ContestChannelTest < ActiveJob::TestCase
 
     # contest channel
     Channels::ContestChannel.new(channel: channel, contested_by: contested_by_channel_one).perform
-    channel.reload; contested_by_channel_one.reload
+    channel.reload
+    contested_by_channel_one.reload
 
     assert_equal channel.contested_by_channel, contested_by_channel_one
     assert_equal contested_by_channel_one.contesting_channel, channel

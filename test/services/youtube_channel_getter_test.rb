@@ -32,7 +32,6 @@ class YoutubeChannelGetterTest < ActiveJob::TestCase
   test "raises a ChannelForbiddenError when a particular channel is requested but can not be accessed" do
     token = 'token123'
     channel_id = 'yt123'
-    channel_data = { 'id' => channel_id }
 
     stub_request(:get, "https://www.googleapis.com/youtube/v3/channels?id=#{channel_id}&part=statistics,snippet").to_return(status: 403, headers: {})
 
@@ -44,7 +43,6 @@ class YoutubeChannelGetterTest < ActiveJob::TestCase
   test "raises a ChannelNotFoundError when a particular channel is requested but can not be found" do
     token = 'token123'
     channel_id = 'yt123'
-    channel_data = { 'id' => channel_id }
 
     stub_request(:get, "https://www.googleapis.com/youtube/v3/channels?id=#{channel_id}&part=statistics,snippet").to_return(status: 404, headers: {})
 
@@ -56,7 +54,6 @@ class YoutubeChannelGetterTest < ActiveJob::TestCase
   test "raises a ChannelBadRequestError when a particular channel is requested but an unexpected error is raised" do
     token = 'token123'
     channel_id = 'yt123'
-    channel_data = { 'id' => channel_id }
 
     stub_request(:get, "https://www.googleapis.com/youtube/v3/channels?id=#{channel_id}&part=statistics,snippet").to_return(status: 400, headers: {})
 

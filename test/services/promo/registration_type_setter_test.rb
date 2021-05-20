@@ -28,8 +28,8 @@ class Promo::RegistrationInstallerTypeSetterTest < ActiveJob::TestCase
     Promo::RegistrationInstallerTypeSetter.new(promo_registrations: PromoRegistration.unattached_only,
                                                installer_type: PromoRegistration::MOBILE).perform
 
-    PromoRegistration.unattached_only.each { |promo_registration|
+    PromoRegistration.unattached_only.each do |promo_registration|
       assert promo_registration.installer_type == PromoRegistration::MOBILE
-    }
+    end
   end
 end

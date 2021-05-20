@@ -52,16 +52,16 @@ class Promo::PublisherChannelsRegistrarTest < ActiveJob::TestCase
     publisher = publishers(:completed)
 
     # Stub Promo response saying the ref code has been taken
-    stub_request(:put, "#{Rails.application.secrets[:api_promo_base_uri]}/api/1/promo/publishers")
-      .to_return(status: 409)
+    stub_request(:put, "#{Rails.application.secrets[:api_promo_base_uri]}/api/1/promo/publishers").
+      to_return(status: 409)
 
     # Stub Promo response with the referral code and current code owner
-    stub_request(:get, "#{Rails.application.secrets[:api_promo_base_uri]}/api/2/promo/referral_code/channel/completed.org")
-      .to_return(status: 200, body: {referral_code: "COM001", owner_id: "invalid"}.to_json)
+    stub_request(:get, "#{Rails.application.secrets[:api_promo_base_uri]}/api/2/promo/referral_code/channel/completed.org").
+      to_return(status: 200, body: { referral_code: "COM001", owner_id: "invalid" }.to_json)
 
     # Stub Promo response when we update the owner
-    stub_request(:put, "#{Rails.application.secrets[:api_promo_base_uri]}/api/1/promo/publishers/COM001")
-      .to_return(status: 200, body: [].to_json)
+    stub_request(:put, "#{Rails.application.secrets[:api_promo_base_uri]}/api/1/promo/publishers/COM001").
+      to_return(status: 200, body: [].to_json)
 
     assert_difference "PromoRegistration.count", 1 do
       publisher.channels.find_each do |channel|
@@ -77,13 +77,13 @@ class Promo::PublisherChannelsRegistrarTest < ActiveJob::TestCase
     publisher = publishers(:completed)
 
     # Stub Promo response with the referral code and current code owner
-    stub_request(:put, "#{Rails.application.secrets[:api_promo_base_uri]}/api/1/promo/publishers")
-      .to_return(status: 500)
+    stub_request(:put, "#{Rails.application.secrets[:api_promo_base_uri]}/api/1/promo/publishers").
+      to_return(status: 500)
 
     assert_difference "PromoRegistration.count", 0 do
       publisher.channels.find_each do |channel|
         Promo::AssignPromoToChannelService.new(channel: channel).perform
-        assert_enqueued_with(job: Promo::RegisterChannelForPromoJob, args: [{channel_id: channel.id, attempt_count: 1 }])
+        assert_enqueued_with(job: Promo::RegisterChannelForPromoJob, args: [{ channel_id: channel.id, attempt_count: 1 }])
       end
     end
     assert_performed_jobs 0
