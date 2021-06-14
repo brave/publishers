@@ -9,7 +9,9 @@ Rails.application.configure do
     'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     'Access-Control-Allow-Methods' => 'GET',
     'Permissions-Policy' => 'interest-cohort=()',
-    'X-Frame-Options' => 'deny'
+    "X-Content-Type-Options" => "nosniff",
+    'X-Frame-Options' => 'deny',
+    'X-XSS-Protection' => '1; mode=block',
   }
 
   # Rate limiting
