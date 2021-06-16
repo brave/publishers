@@ -47,7 +47,6 @@ class Publisher < ApplicationRecord
 
   belongs_to :youtube_channel
   belongs_to :selected_wallet_provider, polymorphic: true
-  belongs_to :uphold_for_join, foreign_key: :selected_wallet_provider_id, class_name: UPHOLD_CONNECTION # rubocop:disable Rails/ReflectionClassName
   belongs_to :gemini_for_join, foreign_key: :selected_wallet_provider_id, class_name: GEMINI_CONNECTION # rubocop:disable Rails/ReflectionClassName
   belongs_to :bitflyer_for_join, foreign_key: :selected_wallet_provider_id, class_name: BITFLYER_CONNECTION # rubocop:disable Rails/ReflectionClassName
 
@@ -108,17 +107,20 @@ class Publisher < ApplicationRecord
     joins(:channels).where('channels.verified = true').distinct
   }
 
-  store_accessor :feature_flags, VALID_FEATURE_FLAGS
+  scope :uphold_selected_provider, -> {
+    joins("INNER JOIN uphold_connections
+           ON uphold_connections.id = publishers.selected_wallet_provider_id
+           AND publishers.selected_wallet_provider_type = '#{UpholdConnection.to_s}'")
+  }
 
-  def self.valid_payable_uphold_creators
-    where(selected_wallet_provider_type: UPHOLD_CONNECTION)
-    where('uphold_connections.country IS NULL').
-      or(
-        where(selected_wallet_provider_type: UPHOLD_CONNECTION).
-        where.not("uphold_connections.country ILIKE '#{UpholdConnection::JAPAN}'")
-      ).
-      joins(:uphold_for_join)
-  end
+  scope :valid_payable_uphold_creators, -> {
+    uphold_selected_provider.
+    where.not(uphold_connections: { address: nil }).
+    where(uphold_connections: { is_member: true }).
+    where.not(uphold_connections: { country: UpholdConnection::JAPAN })
+  }
+
+  store_accessor :feature_flags, VALID_FEATURE_FLAGS
 
   def self.valid_payable_gemini_creators
     where(selected_wallet_provider_type: GEMINI_CONNECTION).
