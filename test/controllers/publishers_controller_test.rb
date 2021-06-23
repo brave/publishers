@@ -178,7 +178,7 @@ class PublishersControllerTest < ActionDispatch::IntegrationTest
     get(url, headers: headers)
 
     # verify that verified publishers are taken to expired token page
-    assert_redirected_to home_publishers_path + "?locale=jabap"
+    assert_redirected_to home_publishers_path + "?locale=ja"
     follow_redirect!
 
     # verify publisher is not redirected to homepage

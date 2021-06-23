@@ -1,7 +1,0 @@
-jabap:
-  browser_users:
-    pending_balance:
-      balance_pending: 保留中の支払い
-      bat_in_locale: BAP
-      next_deposit_date: "次の入金日："
-      payout_in_progress: "進行中の支払い"

@@ -4,7 +4,6 @@ import * as ReactDOM from "react-dom";
 import { IntlProvider, FormattedMessage, useIntl } from "react-intl";
 import en, { flattenMessages } from "../locale/en";
 import ja from "../locale/ja";
-import jabap from "../locale/jabap";
 
 import Modal, { ModalSize } from "../components/modal/Modal";
 
@@ -83,10 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.body.dataset.locale === "ja") {
     localePackage = ja;
   }
-  if (document.body.dataset.locale === "jabap") {
-    localePackage = jabap;
-  }
-
   ReactDOM.render(
     <IntlProvider
       locale={document.body.dataset.locale}

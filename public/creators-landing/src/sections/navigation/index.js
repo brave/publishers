@@ -35,7 +35,7 @@ const DefaultNav = () => {
               <Image src={logo} height="32px" alt={intl.formatMessage({ id: "nav.logoAlt" })} />
             </Box>
           </Link>
-          {(window.location.search.split('locale=')[1] !== 'ja' || window.location.search.split('locale=')[1] !== 'jabap') &&
+          {(window.location.search.split('locale=')[1] !== 'ja') &&
             <Box
               as="a"
               href={locale.nav.batPillHref}

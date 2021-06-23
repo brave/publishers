@@ -8,12 +8,11 @@ import "./style/style.css";
 
 import en from './locale/en';
 import ja from './locale/ja';
-import jabap from './locale/jabap';
 
 // Initizalize all locales for react-intl.
 let locale = window.location.search.split('locale=')[1];
 let locale_package = en;
-if (locale != null && (locale === 'ja' || locale === 'jabap')) {
+if (locale != null && (locale === 'ja')) {
   locale_package = ja;
 }
 

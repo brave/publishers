@@ -370,7 +370,7 @@ class Publisher < ApplicationRecord
   end
 
   def bitflyer_locale?(locale)
-    locale == 'ja' || locale == 'jabap'
+    locale == 'ja'
   end
 
   def last_supported_login_locale
@@ -379,8 +379,6 @@ class Publisher < ApplicationRecord
     case locale
     when 'ja'
       :ja
-    when 'jabap'
-      :jabap
     else
       I18n.default_locale
     end

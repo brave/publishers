@@ -26,9 +26,6 @@ export default class Navbar extends React.Component {
     if (docLocale === "ja") {
       localePackage = ja;
     }
-    if (docLocale === "jabap") {
-      localePackage = jabap;
-    }
     return(
       <IntlProvider locale={docLocale} messages={flattenMessages(localePackage)}>
       <Container>

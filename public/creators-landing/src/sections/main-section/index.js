@@ -35,7 +35,7 @@ export const MainHome = () => {
           pad="large"
           margin={{ top: "80px", bottom: "90px" }}
         >
-          {(window.location.search.split('locale=')[1] !== 'ja' || window.location.search.split('locale=')[1] !== 'jabap') &&
+          {(window.location.search.split('locale=')[1] !== 'ja') &&
             <Box
               className="bat-pill"
               as="a"

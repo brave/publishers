@@ -5,7 +5,6 @@ import * as ReactDOM from "react-dom";
 import { FormattedMessage, injectIntl, IntlProvider } from "react-intl";
 import en, { flattenMessages } from "../../locale/en";
 import ja from "../../locale/ja";
-import jabap from "../../locale/jabap";
 
 import { LoaderIcon } from "brave-ui/components/icons";
 import Information from "./Information";
@@ -245,10 +244,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (locale === "ja") {
     localePackage = ja;
   }
-  if (locale === "jabap") {
-    localePackage = jabap;
-  }
-
   moment.locale(locale);
   ReactDOM.render(
     <IntlProvider

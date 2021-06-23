@@ -28,7 +28,7 @@ const FooterComponent = props => {
         </Text>
         <FooterLegal label={<FormattedMessage id="footer.three" /> } href={locale.footer.threeHref} />
       </Box>
-      {(window.location.search.split('locale=')[1] !== 'ja' || window.location.search.split('locale=')[1] !== 'jabap') &&
+      {(window.location.search.split('locale=')[1] !== 'ja') &&
         <Box
           as="a"
           direction="row"

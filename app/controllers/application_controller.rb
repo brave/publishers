@@ -31,7 +31,7 @@ class ApplicationController < ActionController::Base
       # Relates to https://github.com/brave-intl/publishers/issues/2456
       return I18n.with_locale(preferred_japanese_locale, &action) if path_is_a_callback_method?
 
-      # Append locale=ja or locale=jabap when it isn't given
+      # Append locale=ja when it isn't given
       if japanese_locale_specified? && params[:locale].blank?
         new_url = if URI(request.original_url).query.present?
                     request.original_url + "&locale=#{preferred_japanese_locale.to_s}"
@@ -101,16 +101,11 @@ class ApplicationController < ActionController::Base
   end
 
   def japanese_locale_specified?
-    japanese_http_header? || (params[:locale] == 'ja' || params[:locale] == 'jabap')
+    japanese_http_header? || params[:locale] == 'ja'
   end
 
   def path_is_a_callback_method?
     request.path.split("/").last == "callback"
-  end
-
-  def use_jabap?
-    locale = params[:locale]
-    ((japanese_http_header? || locale == 'ja') && current_user && (!current_user.bitflyer_enabled? || current_user.selected_wallet_provider_type == "PaypalConnection")) || locale == 'jabap'
   end
 
   def extract_locale_from_accept_language_header
@@ -118,6 +113,6 @@ class ApplicationController < ActionController::Base
   end
 
   def preferred_japanese_locale
-    use_jabap? ? :jabap : :ja
+    :ja
   end
 end
