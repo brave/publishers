@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class PublisherMailerTest < ActionMailer::TestCase
-
   before do
     @prev_eyeshade_offline = Rails.application.secrets[:api_eyeshade_offline]
   end
@@ -11,7 +10,7 @@ class PublisherMailerTest < ActionMailer::TestCase
   end
 
   test "wallet_not_connected" do
-    publisher = publishers(:youtube_initial)
+    publisher = publishers(:youtube_new)
     email = PublisherMailer.wallet_not_connected(publisher, 750.0)
 
     assert_emails 1 do

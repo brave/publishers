@@ -41,24 +41,15 @@ class GeminiServiceTest < ActiveJob::TestCase
   end
 
   describe 'when a gemini connection is not verified' do
-    let(:publisher) { publishers(:gemini_not_completed) }
+    let(:publisher) { publishers(:gemini_not_completed_no_address) }
 
     before do
       mock_gemini_unverified_account_request!
       subject
     end
 
-    it 'creates potential payments for the right publisher' do
-      refute_equal PotentialPayment.count, 0
-      PotentialPayment.all.each { |pp| assert_equal publisher.id, pp.publisher_id }
-    end
-
-    it 'has all payments marked as not verified' do
-      refute PotentialPayment.all.any? { |pp| pp.gemini_is_verified }
-    end
-
-    it 'the address is empty' do
-      refute PotentialPayment.all.any? { |pp| pp.address.present? }
+    it 'creates no Potential Payments' do
+      assert_equal PotentialPayment.count, 0
     end
   end
 
@@ -81,7 +72,7 @@ class GeminiServiceTest < ActiveJob::TestCase
     end
 
     it 'the address is the recipient id' do
-      PotentialPayment.all.each { |pp| assert_equal pp.wallet_provider_id, '5f0cdc2f-622b-4c30-ad9f-3a5e6dc85079' }
+      PotentialPayment.all.each { |pp| assert_equal pp.wallet_provider_id, publisher.selected_wallet_provider.referral_deposit_address }
     end
   end
 end

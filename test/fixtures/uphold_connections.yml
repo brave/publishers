@@ -24,10 +24,12 @@ unconnected:
 
 suspended_connection:
   publisher: suspended
+  address: <%= SecureRandom.uuid %>
   is_member: true
 
 youtube_initial_connection:
   publisher: youtube_initial
+  address: <%= SecureRandom.uuid %>
   uphold_verified: true
   encrypted_uphold_access_parameters: "<%= TotpRegistration.encrypt_secret(
     '{}',
@@ -121,6 +123,7 @@ details_connection:
 
 blocked_connection:
   status: blocked
+  address: <%= SecureRandom.uuid %>
   publisher: uphold_connected_blocked
   encrypted_uphold_access_parameters:  "<%= TotpRegistration.encrypt_secret(
     { scope: 'cards:write' }.to_json,
@@ -183,3 +186,7 @@ promo_lockout_connection:
 selected_wallet_provider_connection:
   <<: *base_verified_connection
   publisher: publisher_selected_wallet_provider
+
+fake1_connection:
+  <<: *base_verified_connection
+  publisher: fake1

@@ -26,23 +26,25 @@ module Payout
       # only payout contributions on channels. To support referrals, we'd need to
       # create a deposit_id on each connection, not just the channels
       publisher.channels.verified.each do |channel|
-        potential_payments << PotentialPayment.new(
-          payout_report_id: payout_report&.id,
-          name: "#{channel.publication_title}",
-          amount: "0",
-          fees: "0",
-          publisher_id: publisher.id,
-          channel_id: channel.id,
-          kind: ::PotentialPayment::CONTRIBUTION,
-          url: "#{channel.details.url}",
-          address: channel.deposit_id || '',
-          wallet_provider_id: connection.display_name || '', # this is a hash of the account_id
-          wallet_provider: ::PotentialPayment.wallet_providers['bitflyer'],
-          suspended: publisher.suspended?,
-          status: publisher.last_status_update&.status,
-          channel_stats: channel.details.stats,
-          channel_type: channel.details_type
-        )
+        if channel.channel_deposit_address.present?
+          potential_payments << PotentialPayment.new(
+            payout_report_id: payout_report&.id,
+            name: "#{channel.publication_title}",
+            amount: "0",
+            fees: "0",
+            publisher_id: publisher.id,
+            channel_id: channel.id,
+            kind: ::PotentialPayment::CONTRIBUTION,
+            url: "#{channel.details.url}",
+            address: channel.channel_deposit_address,
+            wallet_provider_id: connection.display_name || '', # this is a hash of the account_id
+            wallet_provider: ::PotentialPayment.wallet_providers['bitflyer'],
+            suspended: publisher.suspended?,
+            status: publisher.last_status_update&.status,
+            channel_stats: channel.details.stats,
+            channel_type: channel.details_type
+          )
+        end
       end
 
       unless payout_utils.should_only_notify?

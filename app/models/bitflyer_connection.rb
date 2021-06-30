@@ -28,6 +28,11 @@ class BitflyerConnection < ApplicationRecord
     ""
   end
 
+  def referral_deposit_address
+    # Don't support referrals at this time for BF
+    nil
+  end
+
   # Public: All the support currency pairs for BAT on the Bitflyer Exchange
   # https://bitflyer.com/en-us/api
   #

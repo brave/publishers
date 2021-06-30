@@ -7,9 +7,9 @@ class GeminiJobImplementationTest < ActiveSupport::TestCase
     gemini_in_japan = publishers(:gemini_in_japan)
     assert gemini_in_japan.selected_wallet_provider.japanese_account?
     mock_report_job = mock
-    mock_report_job.expects(:perform_async).with { |*args|
+    mock_report_job.expects(:perform_async).with do |*args|
       refute Publisher.find(args[0][:publisher_id]).gemini_connection.japanese_account?
-    }
+    end.at_least_once
     gemini_job = Payout::GeminiJobImplementation.new(payout_report_job: mock_report_job)
     gemini_job.call
   end

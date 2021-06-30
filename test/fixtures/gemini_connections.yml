@@ -12,6 +12,7 @@ gemini_in_japan_connection:
 connection_with_token:
   publisher: gemini_completed
   is_verified: true
+  recipient_id: <%= SecureRandom.uuid %>
   <% salt = SecureRandom.random_bytes(12) %>
   encrypted_access_token:  "<%= TotpRegistration.encrypt_secret(
     'access_token',
@@ -29,6 +30,26 @@ connection_with_token:
 
 connection_not_verified:
   publisher: gemini_not_completed
+  is_verified: false
+  recipient_id: <%= SecureRandom.uuid %>
+  status: 'Active'
+  <% salt = SecureRandom.random_bytes(12) %>
+  encrypted_access_token:  "<%= TotpRegistration.encrypt_secret(
+    'access_token',
+    key: GeminiConnection.new.send(:encryption_key),
+    iv: salt
+  ) %>"
+  encrypted_access_token_iv: "<%= Base64.encode64(salt) %>"
+  encrypted_refresh_token:  "<%= TotpRegistration.encrypt_secret(
+    'access_token',
+    key: GeminiConnection.new.send(:encryption_key),
+    iv: salt
+  ) %>"
+  encrypted_refresh_token_iv: "<%= Base64.encode64(salt) %>"
+
+
+connection_not_verified_no_address:
+  publisher: gemini_not_completed_no_address
   is_verified: false
   status: 'Active'
   <% salt = SecureRandom.random_bytes(12) %>

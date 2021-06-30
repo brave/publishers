@@ -5,7 +5,6 @@ require "webmock/minitest"
 class GeminiConnectionTest < ActiveSupport::TestCase
   include MockGeminiResponses
 
-
   describe 'validations' do
     let(:gemini_connection) { gemini_connections(:default_connection) }
 
@@ -52,7 +51,7 @@ class GeminiConnectionTest < ActiveSupport::TestCase
     let(:subject) { connection.sync_connection! }
 
     describe 'when a connection is not payable' do
-      let(:connection) { gemini_connections(:connection_not_verified) }
+      let(:connection) { gemini_connections(:connection_not_verified_no_address) }
       before do
         mock_gemini_unverified_account_request!
       end

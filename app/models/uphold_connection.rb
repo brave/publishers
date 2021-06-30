@@ -180,6 +180,10 @@ class UpholdConnection < ActiveRecord::Base
     uphold_details&.currencies
   end
 
+  def referral_deposit_address
+    address
+  end
+
   # Calls the Uphold API and checks
   #   - if the address exists
   #   - the card is in the same currency as the publisher's chosen currency

@@ -298,6 +298,18 @@ class Channel < ApplicationRecord
     site_banner_lookup.sync!
   end
 
+  def channel_deposit_address
+    selected_wallet_type = publisher.selected_wallet_provider_type
+    case selected_wallet_type
+    when Publisher::UPHOLD_CONNECTION
+      publisher.selected_wallet_provider.referral_deposit_address
+    when Publisher::GEMINI_CONNECTION
+      publisher.selected_wallet_provider.referral_deposit_address
+    when Publisher::BITFLYER_CONNECTION
+      deposit_id
+    end
+  end
+
   private
 
   def should_register_channel_for_promo?

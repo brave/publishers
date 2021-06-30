@@ -47,9 +47,9 @@ class Publisher < ApplicationRecord
 
   belongs_to :youtube_channel
   belongs_to :selected_wallet_provider, polymorphic: true
-  belongs_to :uphold_for_join, foreign_key: :selected_wallet_provider_id, class_name: UPHOLD_CONNECTION # rubocop:disable Rails/ReflectionClassName
-  belongs_to :gemini_for_join, foreign_key: :selected_wallet_provider_id, class_name: GEMINI_CONNECTION # rubocop:disable Rails/ReflectionClassName
-  belongs_to :bitflyer_for_join, foreign_key: :selected_wallet_provider_id, class_name: BITFLYER_CONNECTION # rubocop:disable Rails/ReflectionClassName
+  belongs_to :uphold_for_join, foreign_key: :selected_wallet_provider_id, class_name: UPHOLD_CONNECTION
+  belongs_to :gemini_for_join, foreign_key: :selected_wallet_provider_id, class_name: GEMINI_CONNECTION
+  belongs_to :bitflyer_for_join, foreign_key: :selected_wallet_provider_id, class_name: BITFLYER_CONNECTION
 
   has_one :uphold_connection
   has_one :stripe_connection
@@ -300,6 +300,12 @@ class Publisher < ApplicationRecord
 
   def has_verified_channel?
     channels.any?(&:verified?)
+  end
+
+  def has_deposit_address?
+    verified_channels = channels.verified
+    selected_wallet_provider.referral_deposit_address.present? ||
+      (verified_channels.any? { |channel| channel.channel_deposit_address.present? } && verified_channels.size > 0)
   end
 
   def admin?

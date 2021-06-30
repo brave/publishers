@@ -31,6 +31,11 @@ module Payout
         return true
       end
 
+      if !@publisher.has_deposit_address?
+        create_message("Publisher has no deposit address for wallet")
+        return true
+      end
+
       if @publisher.excluded_from_payout?
         create_message("Publisher has been marked as excluded from payout")
         return true

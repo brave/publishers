@@ -46,6 +46,10 @@ class GeminiConnection < ApplicationRecord
     access_expiration_time.present? && Time.now > access_expiration_time
   end
 
+  def referral_deposit_address
+    recipient_id
+  end
+
   # Makes a request to the Gemini API to refresh the current access_token
   def refresh_authorization!
     # Ensure we have an refresh_token.

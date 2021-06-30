@@ -11,40 +11,48 @@ module Payout
       # Sync the connection
       connection.sync_connection!
 
-      potential_payments << PotentialPayment.new(
-        payout_report_id: @payout_report&.id,
-        name: @publisher.name,
-        amount: "0",
-        fees: "0",
-        publisher_id: @publisher.id,
-        kind: ::PotentialPayment::REFERRAL,
-        gemini_is_verified: connection.payable?,
-        address: connection.recipient_id || '',
-        wallet_provider_id: connection.recipient_id,
-        wallet_provider: ::PotentialPayment.wallet_providers['gemini'],
-        suspended: @publisher.suspended?,
-        status: @publisher.last_status_update&.status
-      )
+      # sync connection can update the recipient_id
+      connection.reload
+      @publisher.reload
 
-      @publisher.channels.verified.each do |channel|
+      if connection.referral_deposit_address.present?
         potential_payments << PotentialPayment.new(
           payout_report_id: @payout_report&.id,
-          name: "#{channel.publication_title}",
+          name: @publisher.name,
           amount: "0",
           fees: "0",
           publisher_id: @publisher.id,
-          channel_id: channel.id,
-          kind: ::PotentialPayment::CONTRIBUTION,
-          url: "#{channel.details.url}",
-          address: connection.recipient_id || '',
+          kind: ::PotentialPayment::REFERRAL,
           gemini_is_verified: connection.payable?,
-          wallet_provider_id: connection.recipient_id,
+          address: connection.referral_deposit_address,
+          wallet_provider_id: connection.referral_deposit_address,
           wallet_provider: ::PotentialPayment.wallet_providers['gemini'],
           suspended: @publisher.suspended?,
-          status: @publisher.last_status_update&.status,
-          channel_stats: channel.details.stats,
-          channel_type: channel.details_type
+          status: @publisher.last_status_update&.status
         )
+      end
+
+      @publisher.channels.verified.each do |channel|
+        if channel.channel_deposit_address
+          potential_payments << PotentialPayment.new(
+            payout_report_id: @payout_report&.id,
+            name: "#{channel.publication_title}",
+            amount: "0",
+            fees: "0",
+            publisher_id: @publisher.id,
+            channel_id: channel.id,
+            kind: ::PotentialPayment::CONTRIBUTION,
+            url: "#{channel.details.url}",
+            address: channel.channel_deposit_address,
+            gemini_is_verified: connection.payable?,
+            wallet_provider_id: channel.channel_deposit_address,
+            wallet_provider: ::PotentialPayment.wallet_providers['gemini'],
+            suspended: @publisher.suspended?,
+            status: @publisher.last_status_update&.status,
+            channel_stats: channel.details.stats,
+            channel_type: channel.details_type
+          )
+        end
       end
 
       unless should_only_notify?
