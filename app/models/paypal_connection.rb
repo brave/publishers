@@ -1,4 +1,4 @@
-class PaypalConnection < ActiveRecord::Base
+class PaypalConnection < ApplicationRecord
   attr_encrypted :refresh_token, key: :encryption_key, marshal: true
 
   JAPAN_COUNTRY_CODE = "JP".freeze

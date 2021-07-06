@@ -1,16 +1,16 @@
 module LegacyData
-  class LegacyU2fRegistration < ActiveRecord::Base
+  class LegacyU2fRegistration < ApplicationRecord
     belongs_to :legacy_publisher, foreign_key: :publisher_id
   end
 
-  class LegacyTotpRegistration < ActiveRecord::Base
+  class LegacyTotpRegistration < ApplicationRecord
     belongs_to :legacy_publisher, foreign_key: :publisher_id
   end
 
-  class LegacyYoutubeChannel < ActiveRecord::Base
+  class LegacyYoutubeChannel < ApplicationRecord
   end
 
-  class LegacyPublisher < ActiveRecord::Base
+  class LegacyPublisher < ApplicationRecord
     belongs_to :legacy_youtube_channel, foreign_key: :youtube_channel_id
     has_many :legacy_u2f_registrations, -> { order("created_at DESC") }, foreign_key: :publisher_id
     has_one :legacy_totp_registration, foreign_key: :publisher_id

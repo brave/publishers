@@ -1,4 +1,4 @@
-class Membership < ActiveRecord::Base
+class Membership < ApplicationRecord
   belongs_to :organization, class_name: "Organization"
 
   # Publisher model will be responsible for casting to the right sub-role

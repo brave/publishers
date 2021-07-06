@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UpholdConnection < ActiveRecord::Base
+class UpholdConnection < ApplicationRecord
   include WalletProviderProperties
 
   has_paper_trail only: [:is_member, :member_at, :uphold_id, :address, :status, :default_currency]
