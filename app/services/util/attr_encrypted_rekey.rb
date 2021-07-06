@@ -19,5 +19,6 @@ class Util::AttrEncryptedRekey
     # old encrypted_mail value to nil before you can force a re-encrypt.
     object.send("encrypted_#{field}=", nil)
     object.send("#{field}=", old_field_value)
+    object
   end
 end
