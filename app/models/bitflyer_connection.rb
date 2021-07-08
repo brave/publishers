@@ -8,7 +8,7 @@ class BitflyerConnection < ApplicationRecord
   has_paper_trail
 
   belongs_to :publisher
-  attr_encrypted :access_token, :refresh_token, key: :encryption_key
+  attr_encrypted :access_token, :refresh_token, key: proc { |record| record.class.encryption_key }
   validates :recipient_id, uniqueness: true, allow_blank: true
   validates :default_currency, inclusion: { in: SUPPORTED_CURRENCIES }, allow_nil: true
 
@@ -67,9 +67,9 @@ class BitflyerConnection < ApplicationRecord
     end
   end
 
-  private
-
-  def encryption_key
-    [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
+  class << self
+    def encryption_key(key: Rails.application.secrets[:attr_encrypted_key])
+      [key].pack("H*")
+    end
   end
 end

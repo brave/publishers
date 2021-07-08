@@ -15,13 +15,13 @@ connection_with_token:
   <% salt = SecureRandom.random_bytes(12) %>
   encrypted_access_token:  "<%= TotpRegistration.encrypt_secret(
     'access_token',
-    key: GeminiConnection.new.send(:encryption_key),
+    key: GeminiConnection.encryption_key,
     iv: salt
   ) %>"
   encrypted_access_token_iv: "<%= Base64.encode64(salt) %>"
   encrypted_refresh_token:  "<%= TotpRegistration.encrypt_secret(
     'access_token',
-    key: GeminiConnection.new.send(:encryption_key),
+    key: GeminiConnection.encryption_key,
     iv: salt
   ) %>"
   encrypted_refresh_token_iv: "<%= Base64.encode64(salt) %>"
@@ -34,13 +34,13 @@ connection_not_verified:
   <% salt = SecureRandom.random_bytes(12) %>
   encrypted_access_token:  "<%= TotpRegistration.encrypt_secret(
     'access_token',
-    key: GeminiConnection.new.send(:encryption_key),
+    key: GeminiConnection.encryption_key,
     iv: salt
   ) %>"
   encrypted_access_token_iv: "<%= Base64.encode64(salt) %>"
   encrypted_refresh_token:  "<%= TotpRegistration.encrypt_secret(
     'access_token',
-    key: GeminiConnection.new.send(:encryption_key),
+    key: GeminiConnection.encryption_key,
     iv: salt
   ) %>"
   encrypted_refresh_token_iv: "<%= Base64.encode64(salt) %>"

@@ -1,7 +1,7 @@
 desc 'Rekey (change keys) of all encrypted fields'
 task rekey: :environment do
-  old_key = Rails.application.secrets[:attr_encrypted_key].byteslice(0, 32)
-  new_key = Rails.application.secrets[:attr_encrypted_key_new].byteslice(0, 32)
+  old_key = Rails.application.secrets[:attr_encrypted_key_old]
+  new_key = Rails.application.secrets[:attr_encrypted_key]
 
   # So we can use ApplicationRecord.descendant even in development
   Rails.application.eager_load!
@@ -19,8 +19,6 @@ task rekey: :environment do
       hash_model_to_columns[model] = encrypted_fields
     end
   end
-
-  # binding.pry
 
   hash_model_to_columns.each do |model, encrypted_fields|
     encrypted_fields.each do |field|
@@ -41,13 +39,14 @@ task rekey: :environment do
 
         old_iv = Base64.decode64(old_field_name_iv)
         old_field_value = record.class.send("decrypt_#{field}",
-                                            field_name_encrypted, iv: old_iv, key: old_key)
+                                            field_name_encrypted, iv: old_iv, key: record.class.encryption_key(key: old_key))
 
         # Perform the rekey on the object in memory using the new key
         Util::AttrEncryptedRekey.rekey(object: record,
                                        field: field,
                                        old_key: old_key,
-                                       new_key: new_key)
+                                       new_key: new_key,
+                                       field_value: old_field_value)
 
         # Update the columns but roll back if there was a problem and the new data doesn't match the old
         record.transaction do
@@ -58,12 +57,17 @@ task rekey: :environment do
           })
 
           record.reload
-
+          record = record.class.find(record.id)
           new_iv = Base64.decode64(record.send("encrypted_#{field}_iv"))
-          new_field_value = record.class.send("decrypt_#{field}",
-                                              field_name_encrypted, iv: new_iv, key: new_key)
 
-          assert old_field_value == new_field_value
+          new_field_name_encrypted = record.send("encrypted_#{field}")
+          new_field_value = record.class.send("decrypt_#{field}",
+                                              new_field_name_encrypted,
+                                              iv: new_iv,
+                                              key: record.class.encryption_key(key: new_key))
+          if old_field_value != new_field_value
+            raise RuntimeError("Values don't match! Old: #{old_field_value} New: #{new_field_value}")
+          end
         end
 
         puts "Rekeyed #{model} #{field} #{record.id}"

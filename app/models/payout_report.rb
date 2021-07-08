@@ -7,7 +7,7 @@ class PayoutReport < ApplicationRecord
   MINIMUM_BALANCE_AMOUNT = 0.01
   BAT = 'bat'.freeze
 
-  attr_encrypted :contents, key: :encryption_key, marshal: true
+  attr_encrypted :contents, key: proc { |record| record.class.encryption_key }, marshal: true
 
   has_many :potential_payments
   has_many :payout_messages
@@ -18,10 +18,12 @@ class PayoutReport < ApplicationRecord
     where(final: true)
   }
 
-  def encryption_key
-    # Truncating the key due to legacy OpenSSL truncating values to 32 bytes.
-    # New implementations should use [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
-    Rails.application.secrets[:attr_encrypted_key].byteslice(0, 32)
+  class << self
+    def encryption_key(key: Rails.application.secrets[:attr_encrypted_key])
+      # Truncating the key due to legacy OpenSSL truncating values to 32 bytes.
+      # New implementations should use [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
+      key.byteslice(0, 32)
+    end
   end
 
   def amount

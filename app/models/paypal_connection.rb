@@ -1,5 +1,5 @@
 class PaypalConnection < ApplicationRecord
-  attr_encrypted :refresh_token, key: :encryption_key, marshal: true
+  attr_encrypted :refresh_token, key: proc { |record| record.class.encryption_key }, marshal: true
 
   JAPAN_COUNTRY_CODE = "JP".freeze
 
@@ -7,10 +7,10 @@ class PaypalConnection < ApplicationRecord
 
   after_save :update_site_banner_lookup!, if: -> { saved_change_to_verified_account? }
 
-  def encryption_key
-    # Truncating the key due to legacy OpenSSL truncating values to 32 bytes.
-    # New implementations should use [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
-    [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
+  class << self
+    def encryption_key(key: Rails.application.secrets[:attr_encrypted_key])
+      [key].pack("H*")
+    end
   end
 
   def hide!

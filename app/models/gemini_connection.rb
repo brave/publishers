@@ -12,7 +12,7 @@ class GeminiConnection < ApplicationRecord
 
   validates :recipient_id, uniqueness: true, allow_blank: true
 
-  attr_encrypted :access_token, :refresh_token, key: :encryption_key
+  attr_encrypted :access_token, :refresh_token, key: proc { |record| record.class.encryption_key }
 
   after_save :update_default_currency, if: -> { saved_change_to_default_currency? }
 
@@ -93,13 +93,15 @@ class GeminiConnection < ApplicationRecord
     end
   end
 
+  class << self
+    def encryption_key(key: Rails.application.secrets[:attr_encrypted_key])
+      [key].pack("H*")
+    end
+  end
+
   private
 
   def update_default_currency
     UpdateGeminiDefaultCurrencyJob.perform_async(id)
-  end
-
-  def encryption_key
-    [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
   end
 end
