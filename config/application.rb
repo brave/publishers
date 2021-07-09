@@ -51,9 +51,5 @@ module Publishers
     config.generators do |generator|
       generator.orm :active_record, primary_key_type: :uuid
     end
-
-    config.after_initialize do
-      Util::AttrEncrypted.monkey_patch_old_key_fallback
-    end
   end
 end
