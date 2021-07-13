@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class UpholdConnection < ActiveRecord::Base
+class UpholdConnection < ApplicationRecord
   include WalletProviderProperties
 
   has_paper_trail only: [:is_member, :member_at, :uphold_id, :address, :status, :default_currency]
@@ -13,8 +13,8 @@ class UpholdConnection < ActiveRecord::Base
 
   USE_BROWSER = 1
 
-  attr_encrypted :uphold_code, key: :encryption_key
-  attr_encrypted :uphold_access_parameters, key: :encryption_key
+  attr_encrypted :uphold_code, key: proc { |record| record.class.encryption_key }
+  attr_encrypted :uphold_access_parameters, key: proc { |record| record.class.encryption_key }
 
   class UpholdAccountState
     REAUTHORIZATION_NEEDED      = :reauthorization_needed
@@ -239,10 +239,12 @@ class UpholdConnection < ActiveRecord::Base
     uphold_details&.currencies
   end
 
-  def encryption_key
-    # Truncating the key due to legacy OpenSSL truncating values to 32 bytes.
-    # New implementations should use [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
-    Rails.application.secrets[:attr_encrypted_key].byteslice(0, 32)
+  class << self
+    def encryption_key(key: Rails.application.secrets[:attr_encrypted_key])
+      # Truncating the key due to legacy OpenSSL truncating values to 32 bytes.
+      # New implementations should use [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
+      key.byteslice(0, 32)
+    end
   end
 
   private

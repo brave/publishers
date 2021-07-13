@@ -4,13 +4,13 @@ enabled_bitflyer_connection:
   <% salt = SecureRandom.random_bytes(12) %>
   encrypted_access_token:  "<%= TotpRegistration.encrypt_secret(
     'access_token',
-    key: BitflyerConnection.new.send(:encryption_key),
+    key: BitflyerConnection.encryption_key,
     iv: salt
   ) %>"
   encrypted_access_token_iv: "<%= Base64.encode64(salt) %>"
   encrypted_refresh_token:  "<%= TotpRegistration.encrypt_secret(
     'access_token',
-    key: BitflyerConnection.new.send(:encryption_key),
+    key: BitflyerConnection.encryption_key,
     iv: salt
   ) %>"
   encrypted_refresh_token_iv: "<%= Base64.encode64(salt) %>"

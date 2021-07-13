@@ -1,3 +1,3 @@
-class OrganizationPermission < ActiveRecord::Base
+class OrganizationPermission < ApplicationRecord
   belongs_to :organization
 end

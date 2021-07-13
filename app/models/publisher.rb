@@ -60,7 +60,7 @@ class Publisher < ApplicationRecord
   has_many :created_users, class_name: "Publisher",
                            foreign_key: "created_by_id"
 
-  attr_encrypted :authentication_token, key: :encryption_key
+  attr_encrypted :authentication_token, key: proc { |record| record.class.encryption_key }
 
   attribute :subscribed_to_marketing_emails, :boolean, default: false # (Albert Wang): We will use this as a flag for whether or not marketing emails are on for the user.
   validates :email, email: true, presence: true, unless: -> { pending_email.present? || deleted? || browser_user? }
@@ -212,10 +212,6 @@ class Publisher < ApplicationRecord
 
   def is_selected_wallet_provider_uphold?
     selected_wallet_provider_type == UPHOLD_CONNECTION
-  end
-
-  def encryption_key
-    Publisher.encryption_key
   end
 
   def email_verified?
@@ -462,10 +458,10 @@ class Publisher < ApplicationRecord
   end
 
   class << self
-    def encryption_key
+    def encryption_key(key: Rails.application.secrets[:attr_encrypted_key])
       # Truncating the key due to legacy OpenSSL truncating values to 32 bytes.
       # New implementations should use [Rails.application.secrets[:attr_encrypted_key]].pack("H*")
-      Rails.application.secrets[:attr_encrypted_key].byteslice(0, 32)
+      key.byteslice(0, 32)
     end
 
     def find_by_owner_identifier(owner_identifier)

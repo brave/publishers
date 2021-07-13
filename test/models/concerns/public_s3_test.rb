@@ -2,7 +2,7 @@ require "test_helper"
 require 'active_storage/service/s3_service'
 
 class PublicS3Test < ActiveSupport::TestCase
-  class DummyClass < ActiveRecord::Base
+  class DummyClass < ApplicationRecord
     include PublicS3
 
     has_one_public_s3 :test_file
@@ -32,7 +32,7 @@ class PublicS3Test < ActiveSupport::TestCase
       {
         io: open(image),
         filename: "dummy.jpg",
-        content_type: "image/jpg"
+        content_type: "image/jpg",
       }
     )
     assert result
@@ -44,7 +44,7 @@ class PublicS3Test < ActiveSupport::TestCase
       {
         io: open(image),
         filename: "dummy.jpg",
-        content_type: "image/jpg"
+        content_type: "image/jpg",
       }
     )
     assert @dummy.public_test_file_url

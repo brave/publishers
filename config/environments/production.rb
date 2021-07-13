@@ -17,7 +17,7 @@ Rails.application.configure do
     'Access-Control-Allow-Headers' => 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
     'Access-Control-Allow-Methods' => 'GET',
     'Permissions-Policy' => 'interest-cohort=()',
-    'X-Frame-Options' => 'deny'
+    'X-Frame-Options' => 'deny',
   }
 
   # Code is not reloaded between requests.
@@ -171,4 +171,8 @@ Rails.application.configure do
   # config.active_record.database_selector = { delay: 2.seconds }
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
+
+  config.after_initialize do
+    Util::AttrEncrypted.monkey_patch_old_key_fallback
+  end
 end

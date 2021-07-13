@@ -1,4 +1,4 @@
-class Organization < ActiveRecord::Base
+class Organization < ApplicationRecord
   has_many :memberships
   has_many :members, through: :memberships
   has_one :organization_permission

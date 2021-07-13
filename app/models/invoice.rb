@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Invoice < ActiveRecord::Base
+class Invoice < ApplicationRecord
   class ReadOnlyError < StandardError; end
 
   belongs_to :publisher

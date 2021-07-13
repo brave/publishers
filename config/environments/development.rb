@@ -106,6 +106,7 @@ Rails.application.configure do
   config.after_initialize do
     Bullet.enable = true
     Bullet.rails_logger = true
+    Util::AttrEncrypted.monkey_patch_old_key_fallback
   end
 
   # Uncomment if you wish to allow Action Cable access from any origin.
