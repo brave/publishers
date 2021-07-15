@@ -33,6 +33,8 @@ module UserFeatureFlags
     scope :stripe_enabled, -> { where("feature_flags->'#{STRIPE_ENABLED}' = 'true'") }
     scope :gemini_enabled, -> { where("feature_flags->'#{GEMINI_ENABLED}' = 'true'") }
     scope :bitflyer_enabled, -> { where("feature_flags->'#{BITFLYER_ENABLED}' = 'true'") }
+    scope :in_top_referrer_program, -> { where("feature_flags->'#{REFERRAL_ENABLED_OVERRIDE}' = 'true'") }
+    scope :not_in_top_referrer_program, -> { where.not(id: in_top_referrer_program) }
   end
 
   def update_feature_flags_from_form(update_flag_params)

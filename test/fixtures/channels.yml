@@ -13,6 +13,11 @@ verified:
   details: verified_details (SiteChannelDetails)
   verified: true
 
+verified:
+  publisher: top_referrer
+  details: top_referrer_verified_details (SiteChannelDetails)
+  verified: true
+
 verified_exclude:
   publisher: medium_media_group
   details: verified_exclude_details (SiteChannelDetails)

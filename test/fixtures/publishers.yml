@@ -48,6 +48,15 @@ completed:
   subscribed_to_marketing_emails: true
   selected_wallet_provider: unconnected (UpholdConnection)
 
+top_referrer:
+  email: "top_referrer@completed.org"
+  two_factor_prompted_at: "<%= 1.day.ago %>"
+  agreed_to_tos: "<%= 1.day.ago %>"
+  default_currency_confirmed_at: "<%= DateTime.now %>"
+  subscribed_to_marketing_emails: true
+  selected_wallet_provider: top_referrer_connected (UpholdConnection)
+  feature_flags: <%= { UserFeatureFlags::REFERRAL_ENABLED_OVERRIDE => true }.to_json %>
+
 gemini_completed:
   email: "gemini@completed.org"
   name: "Gemini the Completed"

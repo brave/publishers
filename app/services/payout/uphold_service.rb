@@ -14,23 +14,25 @@ module Payout
       end
 
       # Create the referral payment for the owner
-      potential_payments << PotentialPayment.new(
-        payout_report_id: @payout_report&.id,
-        name: @publisher.name,
-        amount: "0",
-        fees: "0",
-        publisher_id: @publisher.id,
-        kind: ::PotentialPayment::REFERRAL,
-        address: "#{uphold_connection.address}",
-        uphold_status: uphold_connection.status,
-        reauthorization_needed: uphold_connection.uphold_access_parameters.blank?,
-        uphold_member: uphold_connection.is_member?,
-        uphold_id: uphold_connection.uphold_id,
-        wallet_provider_id: uphold_connection.uphold_id,
-        wallet_provider: ::PotentialPayment.wallet_providers['uphold'],
-        suspended: @publisher.suspended?,
-        status: @publisher.last_status_update&.status
-      )
+      if @publisher.may_create_referrals?
+        potential_payments << PotentialPayment.new(
+          payout_report_id: @payout_report&.id,
+          name: @publisher.name,
+          amount: "0",
+          fees: "0",
+          publisher_id: @publisher.id,
+          kind: ::PotentialPayment::REFERRAL,
+          address: "#{uphold_connection.address}",
+          uphold_status: uphold_connection.status,
+          reauthorization_needed: uphold_connection.uphold_access_parameters.blank?,
+          uphold_member: uphold_connection.is_member?,
+          uphold_id: uphold_connection.uphold_id,
+          wallet_provider_id: uphold_connection.uphold_id,
+          wallet_provider: ::PotentialPayment.wallet_providers['uphold'],
+          suspended: @publisher.suspended?,
+          status: @publisher.last_status_update&.status
+        )
+      end
 
       # Create potential payments for channel contributions
       @publisher.channels.verified.each do |channel|

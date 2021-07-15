@@ -11,20 +11,22 @@ module Payout
       # Sync the connection
       connection.sync_connection!
 
-      potential_payments << PotentialPayment.new(
-        payout_report_id: @payout_report&.id,
-        name: @publisher.name,
-        amount: "0",
-        fees: "0",
-        publisher_id: @publisher.id,
-        kind: ::PotentialPayment::REFERRAL,
-        gemini_is_verified: connection.payable?,
-        address: connection.recipient_id || '',
-        wallet_provider_id: connection.recipient_id,
-        wallet_provider: ::PotentialPayment.wallet_providers['gemini'],
-        suspended: @publisher.suspended?,
-        status: @publisher.last_status_update&.status
-      )
+      if @publisher.may_create_referrals?
+        potential_payments << PotentialPayment.new(
+          payout_report_id: @payout_report&.id,
+          name: @publisher.name,
+          amount: "0",
+          fees: "0",
+          publisher_id: @publisher.id,
+          kind: ::PotentialPayment::REFERRAL,
+          gemini_is_verified: connection.payable?,
+          address: connection.recipient_id || '',
+          wallet_provider_id: connection.recipient_id,
+          wallet_provider: ::PotentialPayment.wallet_providers['gemini'],
+          suspended: @publisher.suspended?,
+          status: @publisher.last_status_update&.status
+        )
+      end
 
       @publisher.channels.verified.each do |channel|
         potential_payments << PotentialPayment.new(

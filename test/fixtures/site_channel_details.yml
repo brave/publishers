@@ -4,6 +4,9 @@ default_details:
 new_site_details:
   brave_publisher_id_unnormalized: "new_site.org"
 
+top_referrer_verified_details:
+  brave_publisher_id: "top-referrer.com"
+
 verified_details:
   brave_publisher_id: "verified.org"
   verification_token: "e3d801860b2185931ae4dbec06f7119712f928eaf39f0fe0c5a335e42b7eb1c6"
