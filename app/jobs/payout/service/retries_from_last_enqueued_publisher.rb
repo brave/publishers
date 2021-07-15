@@ -16,7 +16,7 @@ class Payout::Service::RetriesFromLastEnqueuedPublisher
     elsif kind == IncludePublisherInPayoutReportJob::MANUAL
       publishers = publishers.invoice
     else
-      publishers = publishers.with_verified_channel
+      publishers = publishers.with_verified_channel.not_in_top_referrer_program
     end
 
     publishers = publishers.where("publishers.id > ?", last_enqueued_publisher_id) if last_enqueued_publisher_id.present?
